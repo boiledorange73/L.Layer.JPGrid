@@ -52,7 +52,7 @@
             lats = lats % 30;
             lngs = lngs % 45;
         }
-        // 4th and beyond
+        // 2024-06-27 Added: 4th and beyond
         // [1-4]-[1-4]-...
         var dlatsh = 30, dlngsh = 45;
         for( var n = 4; n <= level; n++ ) {
@@ -75,6 +75,7 @@
     var reg_code1 = /^\s*([0-9]{2})([0-9]{2})\s*$/;
     var reg_code2 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*$/;
     var reg_code3 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*-?\s*([0-9])([0-9])\s*$/;
+    // 2024-06-27 Added: 4th and beyond
     var reg_code9 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*-?\s*([0-9])([0-9])((\s*-?\s*[1-4]\s*)+)$/;
     /**
      * Calculates box of specified JP Grid Code.
@@ -91,13 +92,14 @@
             return null;
         }
         match_result.shift(); // removes 1st
+        // 2024-06-27 Added: 4th and beyond
         var frac = "";
         if( match_result.length >= 7 ) {
             // has frac
             frac = match_result[6].replaceAll("-","");
             match_result.splice(6);
         }
-        // 
+        // 1st, 2nd, 3rd
         var arr = match_result.map((e)=>parseInt(e));
         var level = arr.length / 2;
         var latsecmin, lngsecmin, dlatsec, dlngsec;
@@ -119,6 +121,7 @@
             dlatsec = 30;
             dlngsec = 45;
         }
+        // 2024-06-27 Added: 4th and beyond
         var frac_len = frac.length;
         for( var frac_n =0; frac_n < frac_len; frac_n++ ) {
             var div = 1<<frac_n;
