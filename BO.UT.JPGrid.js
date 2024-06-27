@@ -52,12 +52,30 @@
             lats = lats % 30;
             lngs = lngs % 45;
         }
+        // 4th and beyond
+        // [1-4]-[1-4]-...
+        var dlatsh = 30, dlngsh = 45;
+        for( var n = 4; n <= level; n++ ) {
+            dlatsh = 0.5 * dlatsh;
+            dlngsh = 0.5 * dlngsh;
+            var c = 1;
+            if( lats > dlatsh ) {
+                c = 3;
+                lats = lats - dlatsh;
+            }
+            if( lngs > dlngsh ) {
+                c = c + 1;
+                lngs = lngs - dlngsh;
+            }
+            ret = ret + "-" + c
+        }
         return ret;
     };
     //
     var reg_code1 = /^\s*([0-9]{2})([0-9]{2})\s*$/;
     var reg_code2 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*$/;
     var reg_code3 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*-?\s*([0-9])([0-9])\s*$/;
+    var reg_code9 = /^\s*([0-9]{2})([0-9]{2})\s*-?\s*([0-9])([0-9])\s*-?\s*([0-9])([0-9])((\s*-?\s*[1-4]\s*)+)$/;
     /**
      * Calculates box of specified JP Grid Code.
      * @param code JP Grid Code text.
@@ -67,11 +85,19 @@
         if( code == null ) {
             return null;
         }
-        var match_result =code.match(reg_code3) || code.match(reg_code2) || code.match(reg_code1);
+        var match_result = code.match(reg_code9) ||
+          code.match(reg_code3) || code.match(reg_code2) || code.match(reg_code1);
         if( match_result == null ) {
             return null;
         }
         match_result.shift(); // removes 1st
+        var frac = "";
+        if( match_result.length >= 7 ) {
+            // has frac
+            frac = match_result[6].replaceAll("-","");
+            match_result.splice(6);
+        }
+        // 
         var arr = match_result.map((e)=>parseInt(e));
         var level = arr.length / 2;
         var latsecmin, lngsecmin, dlatsec, dlngsec;
@@ -93,7 +119,19 @@
             dlatsec = 30;
             dlngsec = 45;
         }
+        var frac_len = frac.length;
+        for( var frac_n =0; frac_n < frac_len; frac_n++ ) {
+            var div = 1<<frac_n;
+            dlatsec = 30 / div;
+            dlngsec = 45 / div;
+            var frac_one = parseInt(frac.charAt(frac_n));
+            if( frac_one & 1 ) {
+                latsecmin = latsecmin + dlatsec;
+            }
+            if( frac_one >= 3 ) {
+                lngsecmin = lngsecmin + dlngsec;
+            }
+        }
         return [latsecmin/3600, lngsecmin/3600, (latsecmin+dlatsec)/3600, (lngsecmin+dlngsec)/3600];
     };
-
 } )( typeof window !== "undefined" ? window : this );

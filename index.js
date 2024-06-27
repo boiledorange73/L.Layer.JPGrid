@@ -46,5 +46,5 @@ window.addEventListener("load", function() {
   //  map.setView([35, 135], 14);
   map.fitBounds([[20.4, 122.9],[45.6,154.0]]);
   // Adds JPGrid Control
-  BO.L.control.jpgridcode().addTo(map);
+  BO.L.control.jpgridcode({"level": 3}).addTo(map);
 });
