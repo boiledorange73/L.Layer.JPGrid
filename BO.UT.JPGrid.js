@@ -128,7 +128,7 @@
             dlatsec = 30 / div;
             dlngsec = 45 / div;
             var frac_one = parseInt(frac.charAt(frac_n));
-            if( frac_one & 1 ) {
+            if( !(frac_one & 1) ) { // 2024-06-28: even: east
                 latsecmin = latsecmin + dlatsec;
             }
             if( frac_one >= 3 ) {
